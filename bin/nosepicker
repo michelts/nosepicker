@@ -5,7 +5,7 @@ Read test details from nosetests.xml output file
 
 import os
 
-from systematic.shell import Script
+from nosepicker.shell import Script
 from nosepicker.parser import NosePicker,NoseTestCase
 
 script = Script(description='Pick details from nose test XML results')

@@ -12,7 +12,7 @@ setup(
     keywords = 'nose xunit output parser',
     url = 'http://tuohela.net/packages/nosepicker',
     zip_safe = False,
-    install_requires = ['systematic',],
+    install_requires = ['lxml','setproctitle',],
     scripts = glob.glob('bin/*'),
     packages = ['nosepicker'] + ['nosepicker.%s'%s for s in find_packages('nosepicker')],
     author = 'Ilkka Tuohela',
