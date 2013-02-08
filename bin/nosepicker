@@ -8,7 +8,7 @@ import os
 from nosepicker.shell import Script
 from nosepicker.parser import NosePicker,NoseTestCase
 
-script = Script(description='Pick details from nose test XML results')
+script = Script(name='nosepicker',description='Pick details from nose test XML results')
 script.add_argument('-x','--exclude',action='append',help='Exclude messages with matching state')
 script.add_argument('-e','--errors',action='store_true',help='Print error details')
 script.add_argument('-f','--failures',action='store_true',help='Print failure details')
@@ -21,6 +21,11 @@ args = script.parse_args()
 if not os.path.isfile(args.xml):
     script.exit(1,'No such file: %s' % args.xml)
 
+if args.exclude:
+    script.log.debug('Exclude test case status codes: %s' % ','.join(args.exclude))
+if args.names:
+    script.log.debug('Matching test case names: %s' % ','.join(args.names))
+
 noses = NosePicker(args.xml,short_classnames=args.short)
 for testcase in noses:
     if args.exclude and testcase.status in args.exclude:
@@ -28,20 +33,20 @@ for testcase in noses:
     if args.names and testcase.name not in args.names:
         continue
 
+    if args.failures or args.errors:
+        print '########################################################################'
+
     print testcase
-    if args.errors:
+    if args.errors and testcase.errors:
         for error in testcase.errors:
             print error.type
             print error.errors
             if args.log:
-                print error.log
+                print error.consolelog
 
-    if args.failures:
+    if args.failures and testcase.failures:
         for error in testcase.failures:
             print error.type
             print error.errors
             if args.log:
-                print error.log
-
-    if args.failures or args.errors:
-        print
+                print error.consolelog

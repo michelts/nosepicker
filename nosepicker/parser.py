@@ -6,8 +6,11 @@ Read test details from nosetests.xml output file
 from lxml import etree as ET
 from lxml.builder import E
 
+from nosepicker.log import Logger
+
 class NosePicker(dict):
     def __init__(self,path='noseresults.xml',short_classnames=False):
+        self.log = Logger('nosepicker').default_stream
         self.path = path
 
         self.parser = None
@@ -148,6 +151,7 @@ class NosePicker(dict):
 
 class NoseTestSuite(object):
     def __init__(self,parent,node):
+        self.log = Logger('nosepicker').default_stream
         self.parent = parent
         self.node = node
 
@@ -157,21 +161,26 @@ class NoseTestSuite(object):
 
 class NoseTestCase(object):
     def __init__(self,suite,node):
+        self.log = Logger('nosepicker').default_stream
         self.suite = suite
         self.node = node
 
-        self.skipped = [node for node in self.node.xpath('error')]
+        self.skipped = [node for node in self.node.xpath('skipped')]
         self.errors = [NoseTestError(self,node) for node in self.node.xpath('error')]
         self.failures = [NoseTestError(self,node) for node in self.node.xpath('failure')]
 
         for node in self.node:
             if node.tag not in ('error','failure','skipped'):
+                self.log.debug('UNEXPECTED: %s' % ET.tostring(node))
                 raise ValueError('Unexpected testcase child element: %s' % node.tag)
 
     def __hash__(self):
         return '%s %s' % (self.classname,self.name)
 
     def __repr__(self):
+        self.log.debug('%8s %s: %d errors %d failures %d skipped' % (
+            self.status,self.name,len(self.errors),len(self.failures),len(self.errors)
+        ))
         if not self.short_classnames:
             return '%-7s %-40s %s' % (self.status,self.classname,self.name)
         else:
@@ -185,11 +194,12 @@ class NoseTestCase(object):
     def status(self):
         if len(self.failures):
             return 'FAILURE'
-        if len(self.errors):
+        elif len(self.errors):
             return 'ERROR'
-        if len(self.skipped):
+        elif len(self.skipped):
             return 'SKIP'
-        return 'OK'
+        else:
+            return 'OK'
 
     @property
     def time(self):
@@ -209,6 +219,7 @@ class NoseTestCase(object):
 
 class NoseTestError(object):
     def __init__(self,testcase,node):
+        self.log = Logger('nosepicker').default_stream
         self.testcase = testcase
         self.node = node
 
@@ -220,7 +231,7 @@ class NoseTestError(object):
         return self.node.get('type')
 
     @property
-    def log(self):
+    def consolelog(self):
         return self.node.get('message')
 
     @property

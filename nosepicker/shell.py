@@ -8,7 +8,7 @@ import threading,unicodedata
 from subprocess import Popen,PIPE
 from setproctitle import setproctitle
 
-from systematic.log import Logger
+from nosepicker.log import Logger
 
 import argparse
 
