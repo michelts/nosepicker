@@ -6,7 +6,7 @@ Read test details from nosetests.xml output file
 import os
 
 from nosepicker.shell import Script
-from nosepicker.parser import NosePicker,NoseTestCase
+from nosepicker.parser import NosePicker, NoseTestCase
 
 script = Script(name='nosepicker',description='Pick details from nose test XML results')
 script.add_argument('-x','--exclude',action='append',help='Exclude messages with matching state')
