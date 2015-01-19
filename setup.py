@@ -1,9 +1,9 @@
 
-import os,glob
-from setuptools import setup,find_packages
+import os
+import glob
+from setuptools import setup, find_packages
 
-VERSION='1.0.1'
-README = open(os.path.join(os.path.dirname(__file__),'README.md'),'r').read()
+VERSION='1.0.2'
 
 setup(
     name = 'nosepicker',
@@ -11,13 +11,14 @@ setup(
     license = 'PSF',
     keywords = 'nose xunit output parser',
     url = 'http://tuohela.net/packages/nosepicker',
-    zip_safe = False,
-    install_requires = ['lxml','setproctitle',],
     scripts = glob.glob('bin/*'),
     packages = ['nosepicker'] + ['nosepicker.%s'%s for s in find_packages('nosepicker')],
     author = 'Ilkka Tuohela',
     author_email = 'hile@iki.fi',
     description = 'Scripts to parse nose xunit XML output files',
-    long_description = README,
+    install_requires = (
+        'lxml',
+        'setproctitle',
+    ),
 )
 
