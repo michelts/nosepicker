@@ -22,7 +22,7 @@ class Logger(object):
     __instances = {}
     def __init__(self,name=None):
         name = name is not None and name or self.__class__.__name__
-        if not Logger.__instances.has_key(name):
+        if name not in Logger.__instances:
             Logger.__instances[name] = Logger.LoggerInstance(name)
         self.__dict__['_Logger__instances'] = Logger.__instances
         self.__dict__['name'] = name
