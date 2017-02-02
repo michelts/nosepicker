@@ -103,6 +103,8 @@ class NosePicker(dict):
             self.indexed = self.keys()
             raise StopIteration
 
+    __next__ = next
+
     def __next_xml_element__(self):
         """
         Placeholder for function to parse and insert elements to our
@@ -111,7 +113,7 @@ class NosePicker(dict):
         Must be implemented in child classes.
         """
         while True:
-            (event,element) = self.parser.next()
+            (event, element) = next(self.parser)
 
             if event not in ['start','end']:
                 raise ValueError('Unknown XML parser event: %s' % event)
