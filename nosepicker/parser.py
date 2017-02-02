@@ -14,7 +14,6 @@ class NosePicker(dict):
         self.path = path
 
         self.parser = None
-        self.fd = None
         self.loaded = False
         self.__next = None
         self.short_classnames = short_classnames
@@ -47,20 +46,17 @@ class NosePicker(dict):
         """
         Open XML parser instance
         """
-        if self.fd is not None:
+        if self.parser is not None:
             raise DataSourceError('XML file already open: %s' % self.path)
-        self.fd = open(self.path,'r')
-        self.parser = ET.iterparse(self.fd,events=('start','end',))
+        self.parser = ET.iterparse(self.path, events=('start','end',))
         self.parent = None
 
     def __close_parser__(self):
         """
         Close XML parser instance, interrupting iterator
         """
-        if not hasattr(self,'fd') or self.fd is None:
+        if not hasattr(self, 'parser') or self.parser is None:
             return
-        self.fd.close()
-        self.fd = None
         self.parent = None
         if self.parser is not None:
             del self.parser
@@ -115,7 +111,7 @@ class NosePicker(dict):
         while True:
             (event, element) = next(self.parser)
 
-            if event not in ['start','end']:
+            if event not in ['start', 'end']:
                 raise ValueError('Unknown XML parser event: %s' % event)
 
             if event=='end' and element.tag == 'testsuite':
