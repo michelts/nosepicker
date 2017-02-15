@@ -168,7 +168,7 @@ class NoseTestCase(object):
         self.failures = [NoseTestError(self,node) for node in self.node.xpath('failure')]
 
         for node in self.node:
-            if node.tag not in ('error','failure','skipped','system-err'):
+            if node.tag not in ('error','failure','skipped','system-err','system-out'):
                 self.log.debug('UNEXPECTED: %s' % ET.tostring(node))
                 raise ValueError('Unexpected testcase child element: %s' % node.tag)
 
